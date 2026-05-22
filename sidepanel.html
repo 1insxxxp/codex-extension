@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ChatGPT 登录状态</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body class="sidepanel">
+  <main class="shell">
+    <section class="panel hero-panel">
+      <div class="hero">
+        <div class="brand">
+          <img src="icon48.png" alt="" class="logo">
+          <div>
+            <p class="eyebrow">ChatGPT Session</p>
+            <h1>登录状态</h1>
+          </div>
+        </div>
+        <span id="statusBadge" class="badge badge-checking">检测中</span>
+      </div>
+
+      <p id="message" class="message">正在检测当前浏览器的 ChatGPT 登录状态...</p>
+
+      <section id="details" class="details" hidden>
+        <div class="row">
+          <span class="label">名称</span>
+          <span id="name" class="value">未返回</span>
+        </div>
+        <div class="row">
+          <span class="label">邮箱</span>
+          <span id="email" class="value">未返回</span>
+        </div>
+        <div class="row">
+          <span class="label">账号 ID</span>
+          <span id="accountId" class="value code">未返回</span>
+        </div>
+      </section>
+
+      <div class="actions">
+        <button id="refresh" type="button">刷新状态</button>
+        <a class="secondary" href="https://chatgpt.com/" target="_blank" rel="noreferrer">打开 ChatGPT</a>
+      </div>
+    </section>
+
+    <section class="panel json-card">
+      <div class="section-title">
+        <div>
+          <p class="eyebrow compact">Export</p>
+          <h2>auth.json</h2>
+        </div>
+        <button id="copyAuthJson" class="ghost" type="button">复制</button>
+      </div>
+      <pre id="authJson" class="json-preview">正在生成 JSON...</pre>
+      <p id="copyStatus" class="copy-status" role="status"></p>
+    </section>
+
+    <footer>
+      <span id="checkedAt">尚未完成检测</span>
+      <span>Side Panel</span>
+    </footer>
+  </main>
+
+  <script src="popup.js"></script>
+</body>
+</html>
