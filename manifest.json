@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "ChatGPT Login Status",
+  "name": "Codex Auth Exporter",
   "version": "1.0.0",
-  "description": "Detects whether ChatGPT is logged in and shows non-sensitive account details.",
+  "description": "Exports ChatGPT session auth.json for Codex and ccswitch.",
   "icons": {
     "16": "icon16.png",
     "32": "icon32.png",
@@ -19,7 +19,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "ChatGPT Login Status",
+    "default_title": "Codex Auth Exporter",
     "default_icon": {
       "16": "icon16.png",
       "32": "icon32.png",

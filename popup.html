@@ -3,23 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ChatGPT 登录状态</title>
+  <meta name="theme-color" content="#edf5f2">
+  <title>Codex Auth 导出</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <main class="shell">
+  <main class="shell" aria-label="Codex Auth 导出">
     <section class="hero">
       <div class="brand">
-        <img src="icon48.png" alt="" class="logo">
+        <img src="icon48.png" width="48" height="48" alt="" class="logo" decoding="async">
         <div>
-          <p class="eyebrow">ChatGPT Session</p>
-          <h1>登录状态</h1>
+          <p class="eyebrow" translate="no">Codex Auth Exporter</p>
+          <h1>认证导出</h1>
         </div>
       </div>
-      <span id="statusBadge" class="badge badge-checking">检测中</span>
+      <span id="statusBadge" class="badge badge-checking" role="status" aria-live="polite">检测中</span>
     </section>
 
-    <p id="message" class="message">正在检测当前浏览器的 ChatGPT 登录状态...</p>
+    <p id="message" class="message">正在检测当前浏览器的 ChatGPT 登录状态…</p>
 
     <section id="details" class="details" hidden>
       <div class="row">
@@ -31,14 +32,21 @@
         <span id="email" class="value">未返回</span>
       </div>
       <div class="row">
-        <span class="label">账号 ID</span>
-        <span id="accountId" class="value code">未返回</span>
+        <span class="label">套餐类型</span>
+        <span id="planType" class="value">未返回</span>
       </div>
     </section>
 
     <div class="actions">
       <button id="refresh" type="button">刷新状态</button>
-      <a class="secondary" href="https://chatgpt.com/" target="_blank" rel="noreferrer">打开 ChatGPT</a>
+      <button id="copySession" class="secondary-button" type="button" aria-label="复制完整 session">复制 Session</button>
+      <a class="secondary" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">打开 ChatGPT</a>
+    </div>
+
+    <div hidden>
+      <button id="copyAuthJson" type="button">复制 auth.json</button>
+      <pre id="authJson" translate="no"></pre>
+      <p id="copyStatus" role="status" aria-live="polite"></p>
     </div>
 
     <footer>
