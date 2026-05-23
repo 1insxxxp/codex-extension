@@ -322,6 +322,20 @@ test("admin management styles include accessible focus and reduced motion states
   assert.doesNotMatch(css, /transition:\s*all/);
 });
 
+test("admin management styles use a macOS inspired window treatment", () => {
+  const css = fs.readFileSync(path.join(__dirname, "..", "public", "admin", "messages.css"), "utf8");
+  const html = fs.readFileSync(path.join(__dirname, "..", "public", "admin", "messages.html"), "utf8");
+
+  assert.match(html, /class="window-controls"/);
+  assert.match(html, /aria-hidden="true"/);
+  assert.match(css, /-apple-system/);
+  assert.match(css, /backdrop-filter:\s*blur/);
+  assert.match(css, /--mac-red:\s*#ff5f57/);
+  assert.match(css, /--mac-yellow:\s*#febc2e/);
+  assert.match(css, /--mac-green:\s*#28c840/);
+  assert.match(css, /\.admin-shell\s*{[^}]*border-radius:\s*18px/s);
+});
+
 test("admin login page uses management system branding", async (t) => {
   resetTestDb();
   const port = await startTestServer(t);
