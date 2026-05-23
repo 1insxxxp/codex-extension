@@ -300,6 +300,8 @@ test("admin page exposes analytics dashboard inside the management system", () =
   assert.match(html, /id="downloadChart"/);
   assert.match(html, /aria-live="polite"/);
   assert.match(html, /autocomplete="off"/);
+  assert.match(html, /\/admin\/messages\.css\?v=20260523-mac2/);
+  assert.match(html, /\/admin\/messages\.js\?v=20260523-mac2/);
 });
 
 test("admin script renders analytics charts and tab navigation", () => {

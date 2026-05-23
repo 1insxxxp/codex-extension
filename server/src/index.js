@@ -71,7 +71,10 @@ function createApp() {
   }));
   app.use("/admin", express.static(path.join(publicDir, "admin"), {
     etag: true,
-    maxAge: "5m"
+    maxAge: 0,
+    setHeaders(res) {
+      res.setHeader("cache-control", "no-cache");
+    }
   }));
   app.use(express.static(path.join(publicDir, "site"), {
     etag: true,
