@@ -61,7 +61,7 @@ test("root path serves the public extension website", async (t) => {
   assert.match(body, /\/site\.css\?v=20260523-2/);
   assert.match(body, /codex登录验证器/);
   assert.match(body, /下载插件/);
-  assert.match(body, /\/extension\/releases\/codex-login-status-extension-1\.1\.0\.zip/);
+  assert.match(body, /\/extension\/releases\/codex-login-status-extension-1\.1\.0\.zip\?v=20260523-2/);
   assert.doesNotMatch(body, /\/admin\/messages/);
 });
 
