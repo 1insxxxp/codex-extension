@@ -3,25 +3,29 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#edf5f2">
-  <title>Codex Auth 导出</title>
+  <meta name="theme-color" content="#ffffff">
+  <title>codex登录验证器</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body class="sidepanel">
-  <main class="shell" aria-label="Codex Auth 导出">
-    <section class="panel hero-panel">
+  <main class="shell" aria-label="codex登录验证器">
+    <section class="message-bar" aria-label="消息通知">
+      <div id="messagesList" class="messages-list notification-list" aria-live="polite">
+        <p class="message-empty">正在加载消息...</p>
+      </div>
+      <p id="messagesStatus" class="copy-status" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="panel">
       <div class="hero">
-        <div class="brand">
-          <img src="icon48.png" width="48" height="48" alt="" class="logo" decoding="async">
-          <div>
-            <p class="eyebrow" translate="no">Codex Auth Exporter</p>
-            <h1>认证导出</h1>
-          </div>
+        <img src="icon48.png" width="40" height="40" alt="Logo" class="logo" decoding="async">
+        <div class="header-text">
+          <h1>codex登录验证器</h1>
+          <span id="statusBadge" class="badge badge-checking" role="status" aria-live="polite">检测中</span>
         </div>
-        <span id="statusBadge" class="badge badge-checking" role="status" aria-live="polite">检测中</span>
       </div>
 
-      <p id="message" class="message">正在检测当前浏览器的 ChatGPT 登录状态…</p>
+      <p id="message" class="message">正在获取凭证...</p>
 
       <section id="details" class="details" hidden>
         <div class="row">
@@ -33,33 +37,41 @@
           <span id="email" class="value">未返回</span>
         </div>
         <div class="row">
-          <span class="label">套餐类型</span>
+          <span class="label">套餐</span>
           <span id="planType" class="value">未返回</span>
         </div>
       </section>
 
       <div class="actions">
-        <button id="refresh" type="button">刷新状态</button>
-        <button id="copySession" class="secondary-button" type="button" aria-label="复制完整 session">复制 Session</button>
-        <a class="secondary" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">打开 ChatGPT</a>
+        <button id="refresh" class="primary" type="button">刷新状态</button>
+        <button id="copySession" class="secondary" type="button">复制 Session</button>
+        <a class="secondary outline" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">打开 ChatGPT</a>
       </div>
     </section>
 
     <section class="panel json-card">
       <div class="section-title">
-        <div>
-          <p class="eyebrow compact" translate="no">Export</p>
-          <h2 translate="no">auth.json</h2>
-        </div>
+        <h2 translate="no">auth.json</h2>
         <button id="copyAuthJson" class="ghost" type="button" aria-label="复制 auth.json">复制</button>
       </div>
       <pre id="authJson" class="json-preview" translate="no">正在生成 JSON…</pre>
       <p id="copyStatus" class="copy-status" role="status" aria-live="polite"></p>
+
+      <div class="tutorial-box">
+        <h3>Codex 跳过手机验证教程</h3>
+        <ol>
+          <li>点击上方 <strong>复制</strong> 按钮。</li>
+          <li>覆盖 <code>.codex</code> 目录下的 <code>auth.json</code> 文件<br>
+            <span class="muted">（通常位于 <code>C:\Users\用户名\.codex\auth.json</code>）</span>。
+          </li>
+          <li><strong>或者</strong>，使用 <strong>ccswitch</strong> 在 "OpenAI Official" 中覆盖。</li>
+          <li>覆盖完成后，必须 <strong>完全重启 Codex</strong> 生效。</li>
+        </ol>
+      </div>
     </section>
 
     <footer>
-      <span id="checkedAt">尚未完成检测</span>
-      <span>Side Panel</span>
+      <span id="checkedAt">尚未检测</span>
     </footer>
   </main>
 
