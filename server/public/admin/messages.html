@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Codex 消息后台</title>
+  <link rel="stylesheet" href="/admin/messages.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Codex 消息后台</h1>
+      <p>创建群发或指定安装 ID 的插件内消息。</p>
+    </div>
+    <form method="post" action="/admin/logout">
+      <button type="submit" class="secondary">退出</button>
+    </form>
+  </header>
+
+  <main class="layout">
+    <section class="card">
+      <h2>新建消息</h2>
+      <form id="messageForm" class="stack">
+        <label>标题
+          <input name="title" maxlength="120" required>
+        </label>
+        <label>正文
+          <textarea name="body" rows="6" maxlength="4000" required></textarea>
+        </label>
+        <div class="grid">
+          <label>级别
+            <select name="level">
+              <option value="info">通知</option>
+              <option value="success">完成</option>
+              <option value="warning">提醒</option>
+              <option value="urgent">重要</option>
+            </select>
+          </label>
+          <label>目标
+            <select name="target" id="target">
+              <option value="all">全部用户</option>
+              <option value="install_id">指定安装 ID</option>
+            </select>
+          </label>
+        </div>
+        <label>目标安装 ID
+          <input name="target_value" id="targetValue" placeholder="选择指定安装 ID 时填写">
+        </label>
+        <label>可选链接
+          <input name="url" type="url" placeholder="https://codex.passionapi.com/...">
+        </label>
+        <label>过期时间
+          <input name="expires_at" type="datetime-local">
+        </label>
+        <button type="submit">发送消息</button>
+        <p id="formStatus" class="status" role="status"></p>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <h2>安装记录</h2>
+        <button id="refreshInstalls" class="secondary" type="button">刷新</button>
+      </div>
+      <div id="installs" class="list"></div>
+    </section>
+
+    <section class="card wide">
+      <div class="section-title">
+        <h2>历史消息</h2>
+        <button id="refreshMessages" class="secondary" type="button">刷新</button>
+      </div>
+      <div id="messages" class="list"></div>
+    </section>
+  </main>
+
+  <script src="/admin/messages.js"></script>
+</body>
+</html>

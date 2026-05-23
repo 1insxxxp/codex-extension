@@ -80,11 +80,39 @@ cp ~/.codex/auth.json ~/.codex/auth.json.bak
 - `auth.json` 包含敏感登录凭证，请只用于自己的账号。
 - 不要把复制出来的 `auth.json`、`access_token`、`id_token` 发给他人。
 - ChatGPT Web session 的 token 会过期；过期后需要重新登录 ChatGPT，并重新复制新的 `auth.json`。
-- 本项目只在本地浏览器扩展中运行，不需要后端服务。
+- 消息同步只向 `https://codex.passionapi.com` 发送安装 ID、版本和消息状态，不上传 `auth.json`、`access_token`、`id_token` 或完整 session。
+
+## 消息推送与自托管更新
+
+扩展会生成匿名安装 ID，并通过后台轮询从 `https://codex.passionapi.com` 拉取群发或定向消息。消息管理后台和自托管 CRX 更新模板位于 `server/` 目录。
+
+Node 服务本地启动：
+
+```bash
+cd server
+npm install
+cp .env.example .env
+npm start
+```
+
+管理页面：
+
+```text
+/admin/messages
+```
+
+自托管更新文件：
+
+```text
+/extension/updates.xml
+/extension/releases/
+```
+
+发布 CRX 时必须使用同一个私钥保持扩展 ID 稳定，并更新 `server/public/extension/updates.xml` 中的 `appid`、`codebase` 和 `version`。
 
 ## 开发调试
 
-项目是纯静态 Chrome 扩展，没有构建步骤。
+扩展端仍是纯静态 Chrome 扩展，没有构建步骤。
 
 调试侧边栏脚本：
 

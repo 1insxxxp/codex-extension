@@ -4,16 +4,34 @@ const path = require("node:path");
 const test = require("node:test");
 const vm = require("node:vm");
 
-function createElement(id) {
-  return {
-    id,
+function createElement(idOrTag) {
+  const element = {
+    id: idOrTag,
+    tagName: String(idOrTag).toUpperCase(),
     className: "",
     disabled: false,
     hidden: false,
     textContent: "",
     value: "",
-    addEventListener() {}
+    href: "",
+    target: "",
+    rel: "",
+    title: "",
+    type: "",
+    childNodes: [],
+    children: [],
+    addEventListener() {},
+    append(...children) {
+      this.childNodes.push(...children);
+      this.children.push(...children);
+    },
+    replaceChildren(...children) {
+      this.childNodes = [...children];
+      this.children = [...children];
+    }
   };
+
+  return element;
 }
 
 function loadPopup() {
@@ -32,7 +50,12 @@ function loadPopup() {
     "checkedAt",
     "authJson",
     "copyAuthJson",
-    "copyStatus"
+    "copyStatus",
+    "installId",
+    "copyInstallId",
+    "syncMessages",
+    "messagesList",
+    "messagesStatus"
   ];
 
   for (const id of ids) {
@@ -41,6 +64,7 @@ function loadPopup() {
 
   const context = {
     console,
+    URL,
     btoa(value) {
       return Buffer.from(value, "binary").toString("base64");
     },
@@ -57,12 +81,25 @@ function loadPopup() {
         }
       }
     },
+    chrome: {
+      runtime: {
+        lastError: null,
+        sendMessage(request, callback) {
+          context.__runtimeMessages.push(request);
+          callback({ ok: true, installId: "inst_test", messages: [] });
+        }
+      }
+    },
     document: {
+      createElement(tagName) {
+        return createElement(tagName);
+      },
       getElementById(id) {
         return elements.get(id) || null;
       },
       addEventListener() {}
-    }
+    },
+    __runtimeMessages: []
   };
 
   context.globalThis = context;
@@ -77,7 +114,10 @@ globalThis.__popup = {
   showLoggedIn,
   copySafeAuthJson,
   setCurrentSession,
-  copyFullSession
+  copyFullSession,
+  normalizeMessages,
+  renderMessages,
+  getSafeMessageUrl
 };`,
     context
   );
@@ -214,4 +254,57 @@ test("copyFullSession copies the raw session response", async () => {
 
   assert.deepEqual(JSON.parse(context.__copiedText), session);
   assert.equal(elements.get("copyStatus").textContent, "已复制完整 session。");
+});
+
+test("renderMessages shows an empty state", () => {
+  const { api, elements } = loadPopup();
+
+  api.renderMessages([]);
+
+  const list = elements.get("messagesList");
+  assert.equal(list.children.length, 1);
+  assert.equal(list.children[0].className, "message-empty");
+  assert.equal(list.children[0].textContent, "暂无通知。");
+});
+
+test("renderMessages renders multiple unread ticker messages as text", () => {
+  const { api, elements } = loadPopup();
+
+  api.renderMessages([
+    {
+      id: "msg_1",
+      title: "<b>标题</b>",
+      body: "<script>alert(1)</script>",
+      level: "urgent",
+      created_at: "2026-05-23T12:00:00.000Z"
+    },
+    {
+      id: "msg_2",
+      title: "第二条",
+      body: "继续滚动",
+      level: "info",
+      created_at: "2026-05-23T12:01:00.000Z"
+    }
+  ]);
+
+  const ticker = elements.get("messagesList").children[0];
+  const firstTrack = ticker.children[0];
+  const firstItem = firstTrack.children[0];
+  const meta = firstItem.children[0];
+  const title = firstItem.children[1];
+  const body = firstItem.children[2];
+
+  assert.equal(ticker.className, "ticker");
+  assert.equal(firstTrack.children.length, 2);
+  assert.match(firstItem.className, /ticker-item/);
+  assert.equal(meta.textContent, "通知");
+  assert.equal(title.textContent, "第二条");
+  assert.equal(body.textContent, "继续滚动");
+});
+
+test("getSafeMessageUrl rejects non-http URLs", () => {
+  const { api } = loadPopup();
+
+  assert.equal(api.getSafeMessageUrl("javascript:alert(1)"), "");
+  assert.equal(api.getSafeMessageUrl("https://codex.passionapi.com/a"), "https://codex.passionapi.com/a");
 });
