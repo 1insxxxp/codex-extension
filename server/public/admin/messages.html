@@ -3,119 +3,182 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101828">
   <title>Codex 后台管理系统</title>
   <link rel="stylesheet" href="/admin/messages.css">
 </head>
 <body>
-  <header class="topbar">
-    <div>
-      <h1>Codex 后台管理系统</h1>
-      <p>查看官网访问统计，管理插件消息和安装记录。</p>
+  <a class="skip-link" href="#mainContent">跳到主要内容</a>
+  <div class="admin-shell">
+    <aside class="sidebar">
+      <div class="brand-block">
+        <img src="/icon48.png" width="36" height="36" alt="">
+        <div>
+          <strong>Codex Admin</strong>
+          <span>后台管理系统</span>
+        </div>
+      </div>
+
+      <nav class="side-tabs" role="tablist" aria-label="后台功能">
+        <button class="side-tab active" id="analytics-tab" type="button" role="tab" aria-selected="true" aria-controls="analyticsPanel" data-tab-target="analyticsPanel">
+          <span class="nav-icon" aria-hidden="true">A</span>
+          访问统计
+        </button>
+        <button class="side-tab" id="messages-tab" type="button" role="tab" aria-selected="false" aria-controls="messagesPanel" data-tab-target="messagesPanel" tabindex="-1">
+          <span class="nav-icon" aria-hidden="true">M</span>
+          消息推送
+        </button>
+      </nav>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">codex.passionapi.com</p>
+          <h1>Codex 后台管理系统</h1>
+        </div>
+        <form method="post" action="/admin/logout">
+          <button type="submit" class="secondary">退出登录</button>
+        </form>
+      </header>
+
+      <main class="content" id="mainContent">
+        <section class="tab-panel active" id="analyticsPanel" role="tabpanel" aria-labelledby="analytics-tab" tabindex="0">
+          <div class="page-title">
+            <div>
+              <h2>访问统计</h2>
+              <p id="analyticsUpdated" class="muted" aria-live="polite">正在加载…</p>
+            </div>
+            <button id="refreshAnalytics" class="secondary" type="button">刷新数据</button>
+          </div>
+
+          <div class="metric-grid" aria-label="今日统计">
+            <article>
+              <span>今日访问</span>
+              <strong id="todayPageViews">-</strong>
+              <em>Page views</em>
+            </article>
+            <article>
+              <span>今日访客</span>
+              <strong id="todayVisitors">-</strong>
+              <em>Unique visitors</em>
+            </article>
+            <article>
+              <span>今日点击下载</span>
+              <strong id="todayClicks">-</strong>
+              <em>Download clicks</em>
+            </article>
+            <article>
+              <span>今日实际下载</span>
+              <strong id="todayDownloads">-</strong>
+              <em>Completed downloads</em>
+            </article>
+          </div>
+
+          <div class="dashboard-grid">
+            <section class="panel chart-panel">
+              <div class="section-title">
+                <div>
+                  <h3>近 7 天访问趋势</h3>
+                  <p class="muted">访问、访客、下载点击与实际下载</p>
+                </div>
+              </div>
+              <div id="trafficChart" class="chart" aria-label="近 7 天访问趋势图" aria-live="polite"></div>
+            </section>
+
+            <section class="panel">
+              <div class="section-title">
+                <div>
+                  <h3>累计数据</h3>
+                  <p class="muted">从上线统计开始累计</p>
+                </div>
+              </div>
+              <dl class="totals">
+                <div><dt>首页访问</dt><dd id="totalPageViews">-</dd></div>
+                <div><dt>独立访客</dt><dd id="totalVisitors">-</dd></div>
+                <div><dt>下载点击</dt><dd id="totalClicks">-</dd></div>
+                <div><dt>实际下载</dt><dd id="totalDownloads">-</dd></div>
+              </dl>
+              <div id="downloadChart" class="bar-chart" aria-label="下载转化图" aria-live="polite"></div>
+            </section>
+          </div>
+
+          <section class="panel">
+            <div class="section-title">
+              <h3>最近 7 天明细</h3>
+            </div>
+            <div id="dailyStats" class="data-table" aria-live="polite"></div>
+          </section>
+        </section>
+
+        <section class="tab-panel" id="messagesPanel" role="tabpanel" aria-labelledby="messages-tab" tabindex="0" hidden>
+          <div class="page-title">
+            <div>
+              <h2>消息推送</h2>
+              <p class="muted">创建群发或指定安装 ID 的插件内消息。</p>
+            </div>
+          </div>
+
+          <div class="message-grid">
+            <section class="panel">
+              <h3>新建消息</h3>
+              <form id="messageForm" class="stack" autocomplete="off">
+                <label>标题
+                  <input name="title" maxlength="120" autocomplete="off" required>
+                </label>
+                <label>正文
+                  <textarea name="body" rows="6" maxlength="4000" autocomplete="off" required></textarea>
+                </label>
+                <div class="grid">
+                  <label>级别
+                    <select name="level">
+                      <option value="info">通知</option>
+                      <option value="success">完成</option>
+                      <option value="warning">提醒</option>
+                      <option value="urgent">重要</option>
+                    </select>
+                  </label>
+                  <label>目标
+                    <select name="target" id="target">
+                      <option value="all">全部用户</option>
+                      <option value="install_id">指定安装 ID</option>
+                    </select>
+                  </label>
+                </div>
+                <label>目标安装 ID
+                  <input name="target_value" id="targetValue" autocomplete="off" spellcheck="false" placeholder="选择指定安装 ID 时填写…">
+                </label>
+                <label>可选链接
+                  <input name="url" type="url" autocomplete="off" inputmode="url" spellcheck="false" placeholder="https://codex.passionapi.com/…">
+                </label>
+                <label>过期时间
+                  <input name="expires_at" type="datetime-local" autocomplete="off">
+                </label>
+                <button type="submit">发送消息</button>
+                <p id="formStatus" class="status" role="status" aria-live="polite"></p>
+              </form>
+            </section>
+
+            <section class="panel">
+              <div class="section-title">
+                <h3>安装记录</h3>
+                <button id="refreshInstalls" class="secondary" type="button">刷新</button>
+              </div>
+              <div id="installs" class="list" aria-live="polite"></div>
+            </section>
+          </div>
+
+          <section class="panel">
+            <div class="section-title">
+              <h3>历史消息</h3>
+              <button id="refreshMessages" class="secondary" type="button">刷新</button>
+            </div>
+            <div id="messages" class="list message-list" aria-live="polite"></div>
+          </section>
+        </section>
+      </main>
     </div>
-    <form method="post" action="/admin/logout">
-      <button type="submit" class="secondary">退出</button>
-    </form>
-  </header>
-
-  <main class="layout">
-    <section class="card wide analytics-card" id="analytics">
-      <div class="section-title">
-        <div>
-          <h2>访问统计</h2>
-          <p id="analyticsUpdated" class="muted">正在加载...</p>
-        </div>
-        <button id="refreshAnalytics" class="secondary" type="button">刷新</button>
-      </div>
-      <div class="metric-grid" aria-label="今日统计">
-        <article>
-          <span>今日访问</span>
-          <strong id="todayPageViews">-</strong>
-        </article>
-        <article>
-          <span>今日访客</span>
-          <strong id="todayVisitors">-</strong>
-        </article>
-        <article>
-          <span>今日点击下载</span>
-          <strong id="todayClicks">-</strong>
-        </article>
-        <article>
-          <span>今日实际下载</span>
-          <strong id="todayDownloads">-</strong>
-        </article>
-      </div>
-      <div class="analytics-split">
-        <div>
-          <h3>累计</h3>
-          <dl class="totals">
-            <div><dt>首页访问</dt><dd id="totalPageViews">-</dd></div>
-            <div><dt>独立访客</dt><dd id="totalVisitors">-</dd></div>
-            <div><dt>下载点击</dt><dd id="totalClicks">-</dd></div>
-            <div><dt>实际下载</dt><dd id="totalDownloads">-</dd></div>
-          </dl>
-        </div>
-        <div>
-          <h3>最近 7 天</h3>
-          <div id="dailyStats" class="daily-list"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>新建消息</h2>
-      <form id="messageForm" class="stack">
-        <label>标题
-          <input name="title" maxlength="120" required>
-        </label>
-        <label>正文
-          <textarea name="body" rows="6" maxlength="4000" required></textarea>
-        </label>
-        <div class="grid">
-          <label>级别
-            <select name="level">
-              <option value="info">通知</option>
-              <option value="success">完成</option>
-              <option value="warning">提醒</option>
-              <option value="urgent">重要</option>
-            </select>
-          </label>
-          <label>目标
-            <select name="target" id="target">
-              <option value="all">全部用户</option>
-              <option value="install_id">指定安装 ID</option>
-            </select>
-          </label>
-        </div>
-        <label>目标安装 ID
-          <input name="target_value" id="targetValue" placeholder="选择指定安装 ID 时填写">
-        </label>
-        <label>可选链接
-          <input name="url" type="url" placeholder="https://codex.passionapi.com/...">
-        </label>
-        <label>过期时间
-          <input name="expires_at" type="datetime-local">
-        </label>
-        <button type="submit">发送消息</button>
-        <p id="formStatus" class="status" role="status"></p>
-      </form>
-    </section>
-
-    <section class="card">
-      <div class="section-title">
-        <h2>安装记录</h2>
-        <button id="refreshInstalls" class="secondary" type="button">刷新</button>
-      </div>
-      <div id="installs" class="list"></div>
-    </section>
-
-    <section class="card wide">
-      <div class="section-title">
-        <h2>历史消息</h2>
-        <button id="refreshMessages" class="secondary" type="button">刷新</button>
-      </div>
-      <div id="messages" class="list"></div>
-    </section>
-  </main>
+  </div>
 
   <script src="/admin/messages.js"></script>
 </body>

@@ -286,8 +286,40 @@ test("admin page exposes analytics dashboard inside the management system", () =
   const html = fs.readFileSync(path.join(__dirname, "..", "public", "admin", "messages.html"), "utf8");
 
   assert.match(html, /Codex 后台管理系统/);
-  assert.match(html, /id="analytics"/);
+  assert.match(html, /id="mainContent"/);
+  assert.match(html, /role="tablist"/);
+  assert.match(html, /id="analytics-tab"/);
+  assert.match(html, /id="messages-tab"/);
+  assert.match(html, /data-tab-target="analyticsPanel"/);
+  assert.match(html, /data-tab-target="messagesPanel"/);
+  assert.match(html, /id="analyticsPanel"/);
+  assert.match(html, /id="messagesPanel"/);
   assert.match(html, /访问统计/);
+  assert.match(html, /消息推送/);
+  assert.match(html, /id="trafficChart"/);
+  assert.match(html, /id="downloadChart"/);
+  assert.match(html, /aria-live="polite"/);
+  assert.match(html, /autocomplete="off"/);
+});
+
+test("admin script renders analytics charts and tab navigation", () => {
+  const script = fs.readFileSync(path.join(__dirname, "..", "public", "admin", "messages.js"), "utf8");
+
+  assert.match(script, /function renderTrafficChart/);
+  assert.match(script, /function renderDownloadChart/);
+  assert.match(script, /function activateTab/);
+  assert.match(script, /function syncTabFromUrl/);
+  assert.match(script, /function handleTabKeydown/);
+  assert.match(script, /history\.replaceState/);
+});
+
+test("admin management styles include accessible focus and reduced motion states", () => {
+  const css = fs.readFileSync(path.join(__dirname, "..", "public", "admin", "messages.css"), "utf8");
+
+  assert.match(css, /:focus-visible/);
+  assert.match(css, /prefers-reduced-motion/);
+  assert.match(css, /touch-action:\s*manipulation/);
+  assert.doesNotMatch(css, /transition:\s*all/);
 });
 
 test("admin login page uses management system branding", async (t) => {
