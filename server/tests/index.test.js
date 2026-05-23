@@ -29,6 +29,9 @@ test("root path serves the public extension website", async (t) => {
 
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type"), /text\/html/);
+  assert.match(body, /<link rel="icon" type="image\/png" sizes="48x48" href="\/icon48\.png">/);
+  assert.match(body, /<link rel="apple-touch-icon" sizes="128x128" href="\/icon128\.png">/);
+  assert.match(body, /\/site\.css\?v=20260523-2/);
   assert.match(body, /codex登录验证器/);
   assert.match(body, /下载插件/);
   assert.match(body, /\/extension\/releases\/codex-login-status-extension-1\.1\.0\.zip/);
@@ -42,4 +45,18 @@ test("public website style matches the blue gradient logo identity", () => {
   assert.match(css, /--logo-violet:\s*#7b2cff/);
   assert.match(css, /@keyframes\s+riseIn/);
   assert.match(css, /@keyframes\s+shine/);
+});
+
+test("public website icons reuse the extension logo assets", () => {
+  const projectRoot = path.join(__dirname, "..", "..");
+  const siteDir = path.join(__dirname, "..", "public", "site");
+
+  assert.deepEqual(
+    fs.readFileSync(path.join(siteDir, "icon48.png")),
+    fs.readFileSync(path.join(projectRoot, "icon48.png"))
+  );
+  assert.deepEqual(
+    fs.readFileSync(path.join(siteDir, "icon128.png")),
+    fs.readFileSync(path.join(projectRoot, "icon128.png"))
+  );
 });
