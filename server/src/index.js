@@ -2,6 +2,7 @@ const express = require("express");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const path = require("node:path");
+const { router: analyticsRoutes, recordRequestEvent } = require("./routes/analytics");
 const adminRoutes = require("./routes/admin");
 const extensionRoutes = require("./routes/extension");
 
@@ -33,10 +34,29 @@ function createApp() {
   app.use(express.urlencoded({ extended: false, limit: "64kb" }));
   app.use(cookieParser());
 
+  app.use((req, res, next) => {
+    if (req.method === "GET" && req.path === "/") {
+      recordRequestEvent(req, "page_view", "/");
+    }
+    next();
+  });
+  app.use((req, res, next) => {
+    if (req.method === "GET" && /^\/extension\/releases\/[\w.-]+\.(zip|crx)$/.test(req.path)) {
+      const downloadPath = req.path;
+      res.on("finish", () => {
+        if (res.statusCode >= 200 && res.statusCode < 400) {
+          recordRequestEvent(req, "download_file", downloadPath);
+        }
+      });
+    }
+    next();
+  });
+
   app.get("/healthz", (req, res) => {
     res.json({ ok: true });
   });
 
+  app.use("/api/analytics", analyticsRoutes);
   app.use("/api/extension", extensionRoutes);
   app.use("/admin", adminRoutes);
   app.use("/extension", express.static(path.join(publicDir, "extension"), {

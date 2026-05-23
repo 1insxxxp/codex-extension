@@ -58,12 +58,12 @@ router.get("/login", (req, res) => {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>登录 - Codex 消息后台</title>
+  <title>登录 - Codex 后台管理系统</title>
   <link rel="stylesheet" href="/admin/messages.css">
 </head>
 <body>
   <main class="login-card">
-    <h1>Codex 消息后台</h1>
+    <h1>Codex 后台管理系统</h1>
     <form method="post" action="/admin/login" class="stack">
       <label>用户名<input name="username" autocomplete="username" required></label>
       <label>密码<input name="password" type="password" autocomplete="current-password" required></label>
@@ -87,6 +87,10 @@ router.get("/api/installs", requireAdmin, (req, res) => {
 
 router.get("/api/messages", requireAdmin, (req, res) => {
   res.json({ ok: true, messages: db.listAdminMessages().map(serializeMessage) });
+});
+
+router.get("/api/analytics", requireAdmin, (req, res) => {
+  res.json({ ok: true, analytics: db.getAnalyticsSummary() });
 });
 
 router.post("/api/messages", requireAdmin, (req, res) => {

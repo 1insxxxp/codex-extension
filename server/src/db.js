@@ -8,7 +8,8 @@ fs.mkdirSync(path.dirname(dbPath), { recursive: true });
 const initialState = {
   extension_installs: [],
   messages: [],
-  message_reads: []
+  message_reads: [],
+  analytics_events: []
 };
 
 function readState() {
@@ -21,7 +22,8 @@ function readState() {
     return {
       extension_installs: Array.isArray(parsed.extension_installs) ? parsed.extension_installs : [],
       messages: Array.isArray(parsed.messages) ? parsed.messages : [],
-      message_reads: Array.isArray(parsed.message_reads) ? parsed.message_reads : []
+      message_reads: Array.isArray(parsed.message_reads) ? parsed.message_reads : [],
+      analytics_events: Array.isArray(parsed.analytics_events) ? parsed.analytics_events : []
     };
   } catch {
     return structuredClone(initialState);
@@ -130,6 +132,102 @@ function deleteMessage(messageId) {
   });
 }
 
+function dateKey(value) {
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) {
+    return "";
+  }
+
+  return date.toISOString().slice(0, 10);
+}
+
+function createEmptyAnalyticsDay(date) {
+  return {
+    date,
+    page_view: 0,
+    download_click: 0,
+    download_file: 0,
+    unique_visitors: 0
+  };
+}
+
+function recordAnalyticsEvent(event) {
+  const record = {
+    type: event.type,
+    path: event.path || "",
+    visitor_hash: event.visitor_hash || "",
+    occurred_at: event.occurred_at || new Date().toISOString()
+  };
+
+  return update((state) => {
+    state.analytics_events.push(record);
+    if (state.analytics_events.length > 50000) {
+      state.analytics_events = state.analytics_events.slice(-50000);
+    }
+    return record;
+  });
+}
+
+function getAnalyticsSummary(now = new Date().toISOString()) {
+  const state = readState();
+  const todayKey = dateKey(now);
+  const totals = {
+    page_view: 0,
+    download_click: 0,
+    download_file: 0,
+    unique_visitors: 0
+  };
+  const totalVisitors = new Set();
+  const days = [];
+  const dayMap = new Map();
+  const dayVisitors = new Map();
+  const baseTime = new Date(`${todayKey}T00:00:00.000Z`).getTime();
+
+  for (let offset = 6; offset >= 0; offset -= 1) {
+    const key = new Date(baseTime - offset * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    const day = createEmptyAnalyticsDay(key);
+    days.push(day);
+    dayMap.set(key, day);
+    dayVisitors.set(key, new Set());
+  }
+
+  for (const event of state.analytics_events) {
+    if (event.type === "page_view" || event.type === "download_click" || event.type === "download_file") {
+      totals[event.type] += 1;
+    }
+
+    if (event.visitor_hash) {
+      totalVisitors.add(event.visitor_hash);
+    }
+
+    const key = dateKey(event.occurred_at);
+    const day = dayMap.get(key);
+    if (!day) {
+      continue;
+    }
+
+    if (event.type === "page_view" || event.type === "download_click" || event.type === "download_file") {
+      day[event.type] += 1;
+    }
+
+    if (event.visitor_hash) {
+      dayVisitors.get(key).add(event.visitor_hash);
+    }
+  }
+
+  totals.unique_visitors = totalVisitors.size;
+  for (const day of days) {
+    day.unique_visitors = dayVisitors.get(day.date).size;
+  }
+
+  return {
+    generated_at: now,
+    totals,
+    today: dayMap.get(todayKey) || createEmptyAnalyticsDay(todayKey),
+    days
+  };
+}
+
 module.exports = {
   upsertInstall,
   touchInstall,
@@ -138,5 +236,7 @@ module.exports = {
   listAdminMessages,
   listMessagesForInstall,
   markMessageRead,
-  deleteMessage
+  deleteMessage,
+  recordAnalyticsEvent,
+  getAnalyticsSummary
 };

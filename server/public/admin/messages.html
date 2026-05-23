@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Codex 消息后台</title>
+  <title>Codex 后台管理系统</title>
   <link rel="stylesheet" href="/admin/messages.css">
 </head>
 <body>
   <header class="topbar">
     <div>
-      <h1>Codex 消息后台</h1>
-      <p>创建群发或指定安装 ID 的插件内消息。</p>
+      <h1>Codex 后台管理系统</h1>
+      <p>查看官网访问统计，管理插件消息和安装记录。</p>
     </div>
     <form method="post" action="/admin/logout">
       <button type="submit" class="secondary">退出</button>
@@ -18,6 +18,49 @@
   </header>
 
   <main class="layout">
+    <section class="card wide analytics-card" id="analytics">
+      <div class="section-title">
+        <div>
+          <h2>访问统计</h2>
+          <p id="analyticsUpdated" class="muted">正在加载...</p>
+        </div>
+        <button id="refreshAnalytics" class="secondary" type="button">刷新</button>
+      </div>
+      <div class="metric-grid" aria-label="今日统计">
+        <article>
+          <span>今日访问</span>
+          <strong id="todayPageViews">-</strong>
+        </article>
+        <article>
+          <span>今日访客</span>
+          <strong id="todayVisitors">-</strong>
+        </article>
+        <article>
+          <span>今日点击下载</span>
+          <strong id="todayClicks">-</strong>
+        </article>
+        <article>
+          <span>今日实际下载</span>
+          <strong id="todayDownloads">-</strong>
+        </article>
+      </div>
+      <div class="analytics-split">
+        <div>
+          <h3>累计</h3>
+          <dl class="totals">
+            <div><dt>首页访问</dt><dd id="totalPageViews">-</dd></div>
+            <div><dt>独立访客</dt><dd id="totalVisitors">-</dd></div>
+            <div><dt>下载点击</dt><dd id="totalClicks">-</dd></div>
+            <div><dt>实际下载</dt><dd id="totalDownloads">-</dd></div>
+          </dl>
+        </div>
+        <div>
+          <h3>最近 7 天</h3>
+          <div id="dailyStats" class="daily-list"></div>
+        </div>
+      </div>
+    </section>
+
     <section class="card">
       <h2>新建消息</h2>
       <form id="messageForm" class="stack">

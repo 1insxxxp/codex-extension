@@ -2,10 +2,23 @@ const form = document.getElementById("messageForm");
 const formStatus = document.getElementById("formStatus");
 const installs = document.getElementById("installs");
 const messages = document.getElementById("messages");
+const refreshAnalytics = document.getElementById("refreshAnalytics");
 const refreshInstalls = document.getElementById("refreshInstalls");
 const refreshMessages = document.getElementById("refreshMessages");
 const target = document.getElementById("target");
 const targetValue = document.getElementById("targetValue");
+const analyticsFields = {
+  updated: document.getElementById("analyticsUpdated"),
+  todayPageViews: document.getElementById("todayPageViews"),
+  todayVisitors: document.getElementById("todayVisitors"),
+  todayClicks: document.getElementById("todayClicks"),
+  todayDownloads: document.getElementById("todayDownloads"),
+  totalPageViews: document.getElementById("totalPageViews"),
+  totalVisitors: document.getElementById("totalVisitors"),
+  totalClicks: document.getElementById("totalClicks"),
+  totalDownloads: document.getElementById("totalDownloads"),
+  dailyStats: document.getElementById("dailyStats")
+};
 
 function setStatus(text) {
   formStatus.textContent = text;
@@ -49,6 +62,45 @@ function createText(tagName, className, text) {
   }
   element.textContent = text;
   return element;
+}
+
+function formatNumber(value) {
+  return new Intl.NumberFormat("zh-CN").format(Number(value || 0));
+}
+
+function setText(element, value) {
+  if (element) {
+    element.textContent = value;
+  }
+}
+
+function renderAnalytics(summary) {
+  const today = summary.today || {};
+  const totals = summary.totals || {};
+
+  setText(analyticsFields.updated, `更新时间 ${formatTime(summary.generated_at)}`);
+  setText(analyticsFields.todayPageViews, formatNumber(today.page_view));
+  setText(analyticsFields.todayVisitors, formatNumber(today.unique_visitors));
+  setText(analyticsFields.todayClicks, formatNumber(today.download_click));
+  setText(analyticsFields.todayDownloads, formatNumber(today.download_file));
+  setText(analyticsFields.totalPageViews, formatNumber(totals.page_view));
+  setText(analyticsFields.totalVisitors, formatNumber(totals.unique_visitors));
+  setText(analyticsFields.totalClicks, formatNumber(totals.download_click));
+  setText(analyticsFields.totalDownloads, formatNumber(totals.download_file));
+
+  analyticsFields.dailyStats.replaceChildren();
+  for (const day of summary.days || []) {
+    const row = document.createElement("article");
+    row.className = "daily-row";
+    row.append(
+      createText("span", "", day.date),
+      createText("span", "", `访问 ${formatNumber(day.page_view)}`),
+      createText("span", "", `访客 ${formatNumber(day.unique_visitors)}`),
+      createText("span", "", `点击 ${formatNumber(day.download_click)}`),
+      createText("span", "", `下载 ${formatNumber(day.download_file)}`)
+    );
+    analyticsFields.dailyStats.append(row);
+  }
 }
 
 function copyText(value) {
@@ -124,6 +176,12 @@ async function loadInstalls() {
   renderInstalls(payload.installs || []);
 }
 
+async function loadAnalytics() {
+  setText(analyticsFields.updated, "正在加载...");
+  const payload = await requestJson("/admin/api/analytics");
+  renderAnalytics(payload.analytics || {});
+}
+
 async function loadMessages() {
   messages.textContent = "正在加载...";
   const payload = await requestJson("/admin/api/messages");
@@ -185,9 +243,11 @@ function updateTargetInput() {
 }
 
 form.addEventListener("submit", createMessage);
+refreshAnalytics.addEventListener("click", loadAnalytics);
 refreshInstalls.addEventListener("click", loadInstalls);
 refreshMessages.addEventListener("click", loadMessages);
 target.addEventListener("change", updateTargetInput);
 updateTargetInput();
+loadAnalytics().catch((error) => setText(analyticsFields.updated, error.message));
 loadInstalls().catch((error) => installs.textContent = error.message);
 loadMessages().catch((error) => messages.textContent = error.message);

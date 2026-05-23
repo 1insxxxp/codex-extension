@@ -82,6 +82,88 @@ p {
   grid-column: 1 / -1;
 }
 
+.analytics-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.metric-grid article {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  background: rgba(9, 105, 218, 0.06);
+}
+
+.metric-grid span,
+dt {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.metric-grid strong {
+  display: block;
+  margin-top: 8px;
+  font-size: clamp(28px, 5vw, 42px);
+  line-height: 1;
+}
+
+.analytics-split {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.5fr) minmax(320px, 1fr);
+  gap: 16px;
+}
+
+.totals {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.totals div,
+.daily-row {
+  display: grid;
+  grid-template-columns: minmax(110px, 1fr) repeat(4, minmax(56px, max-content));
+  gap: 12px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 10px;
+}
+
+.totals div {
+  grid-template-columns: 1fr auto;
+}
+
+dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.daily-list {
+  display: grid;
+  gap: 8px;
+}
+
+.daily-row {
+  font-size: 13px;
+}
+
+.daily-row span:first-child {
+  font-weight: 700;
+}
+
+.daily-row span:not(:first-child) {
+  color: var(--muted);
+  text-align: right;
+}
+
 .stack {
   display: flex;
   flex-direction: column;
@@ -198,5 +280,14 @@ a {
   .topbar {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .metric-grid,
+  .analytics-split {
+    grid-template-columns: 1fr;
+  }
+
+  .daily-row {
+    grid-template-columns: 1fr 1fr;
   }
 }
