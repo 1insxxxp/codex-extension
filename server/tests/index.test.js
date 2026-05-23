@@ -300,8 +300,8 @@ test("admin page exposes analytics dashboard inside the management system", () =
   assert.match(html, /id="downloadChart"/);
   assert.match(html, /aria-live="polite"/);
   assert.match(html, /autocomplete="off"/);
-  assert.match(html, /\/admin\/messages\.css\?v=20260523-mac2/);
-  assert.match(html, /\/admin\/messages\.js\?v=20260523-mac2/);
+  assert.match(html, /\/admin\/messages\.css\?v=20260523-admin3/);
+  assert.match(html, /\/admin\/messages\.js\?v=20260523-admin3/);
 });
 
 test("admin script renders analytics charts and tab navigation", () => {
@@ -324,18 +324,17 @@ test("admin management styles include accessible focus and reduced motion states
   assert.doesNotMatch(css, /transition:\s*all/);
 });
 
-test("admin management styles use a macOS inspired window treatment", () => {
+test("admin management styles use a standard operations dashboard treatment", () => {
   const css = fs.readFileSync(path.join(__dirname, "..", "public", "admin", "messages.css"), "utf8");
   const html = fs.readFileSync(path.join(__dirname, "..", "public", "admin", "messages.html"), "utf8");
 
-  assert.match(html, /class="window-controls"/);
-  assert.match(html, /aria-hidden="true"/);
-  assert.match(css, /-apple-system/);
-  assert.match(css, /backdrop-filter:\s*blur/);
-  assert.match(css, /--mac-red:\s*#ff5f57/);
-  assert.match(css, /--mac-yellow:\s*#febc2e/);
-  assert.match(css, /--mac-green:\s*#28c840/);
-  assert.match(css, /\.admin-shell\s*{[^}]*border-radius:\s*18px/s);
+  assert.doesNotMatch(html, /window-controls/);
+  assert.match(css, /--sidebar-bg:\s*#111827/);
+  assert.match(css, /--accent:\s*#2563eb/);
+  assert.match(css, /\.admin-shell\s*{[^}]*grid-template-columns:\s*260px minmax\(0, 1fr\)/s);
+  assert.match(css, /\.sidebar\s*{[^}]*background:\s*var\(--sidebar-bg\)/s);
+  assert.doesNotMatch(css, /--mac-red|--mac-yellow|--mac-green/);
+  assert.doesNotMatch(css, /backdrop-filter:\s*blur/);
 });
 
 test("admin login page uses management system branding", async (t) => {
