@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f5ef">
+  <meta name="description" content="codex登录验证器帮助从已登录的 ChatGPT 浏览器环境生成 Codex 可用的 auth.json。">
+  <title>codex登录验证器</title>
+  <link rel="stylesheet" href="/site.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="codex登录验证器首页">
+      <img src="/icon48.png" width="32" height="32" alt="">
+      <span>codex登录验证器</span>
+    </a>
+    <nav aria-label="主要导航">
+      <a href="#install">安装</a>
+      <a href="#security">安全说明</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Chrome / Edge 扩展</p>
+        <h1>把 ChatGPT 网页登录状态转换成 Codex 可用凭证。</h1>
+        <p class="lead">在已登录 ChatGPT 的浏览器里读取 session，生成可复制的 auth.json，减少 Codex 登录时反复手机验证的麻烦。</p>
+        <div class="actions">
+          <a class="download" href="/extension/releases/codex-login-status-extension-1.1.0.zip" download>下载插件</a>
+          <a class="secondary" href="#install">查看安装步骤</a>
+        </div>
+        <p class="version">当前版本 1.1.0，下载后请先解压再加载。</p>
+      </div>
+
+      <div class="preview" aria-label="插件能力概览">
+        <div class="preview-top">
+          <span class="dot green"></span>
+          <span class="dot yellow"></span>
+          <span class="dot red"></span>
+        </div>
+        <div class="status-row">
+          <span>ChatGPT 状态</span>
+          <strong>已登录</strong>
+        </div>
+        <pre>{
+  "auth_mode": "chatgpt",
+  "tokens": {
+    "id_token": "...",
+    "access_token": "...",
+    "account_id": "..."
+  }
+}</pre>
+      </div>
+    </section>
+
+    <section class="strip" aria-label="核心能力">
+      <article>
+        <span>01</span>
+        <h2>读取状态</h2>
+        <p>检测当前浏览器里的 ChatGPT 登录状态和基础账号信息。</p>
+      </article>
+      <article>
+        <span>02</span>
+        <h2>生成 JSON</h2>
+        <p>生成 Codex 与 ccswitch 可用的 auth.json 内容。</p>
+      </article>
+      <article>
+        <span>03</span>
+        <h2>接收通知</h2>
+        <p>插件内支持消息同步，用于版本提醒和使用公告。</p>
+      </article>
+    </section>
+
+    <section id="install" class="install">
+      <div>
+        <p class="eyebrow">安装方式</p>
+        <h2>下载 zip，解压后加载扩展。</h2>
+      </div>
+      <ol>
+        <li>点击“下载插件”，保存 zip 文件并解压。</li>
+        <li>打开 Chrome 或 Edge 的 <code>chrome://extensions</code>。</li>
+        <li>打开右上角“开发者模式”。</li>
+        <li>点击“加载已解压的扩展程序”，选择包含 <code>manifest.json</code> 的文件夹。</li>
+        <li>登录 <code>https://chatgpt.com</code> 后，点击扩展图标打开侧边栏。</li>
+      </ol>
+    </section>
+
+    <section id="security" class="security">
+      <p class="eyebrow">安全说明</p>
+      <h2>凭证只用于你自己的 Codex 登录。</h2>
+      <p>auth.json、access_token、id_token 都属于敏感信息，不要发送给他人。插件消息同步只使用安装 ID、版本和消息状态，不上传完整 session 或 auth.json。</p>
+    </section>
+  </main>
+
+  <footer>
+    <span>codex登录验证器</span>
+    <a href="/extension/releases/codex-login-status-extension-1.1.0.zip" download>下载 1.1.0</a>
+  </footer>
+</body>
+</html>

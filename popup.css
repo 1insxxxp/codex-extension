@@ -436,14 +436,17 @@ footer {
   width: max-content;
   min-width: 100%;
   white-space: nowrap;
+}
+
+.ticker-marquee {
   animation: ticker-scroll 28s linear infinite;
 }
 
-.ticker:hover {
+.ticker-marquee:hover {
   animation-play-state: paused;
 }
 
-.ticker-single {
+.ticker-marquee.ticker-single {
   animation-duration: 18s;
 }
 
@@ -458,25 +461,39 @@ footer {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--text-main);
   font-size: 13px;
 }
 
-.ticker-title {
-  font-weight: 600;
+.ticker-level {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--status-info-bg);
+  color: var(--status-info-text);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
 }
 
 .ticker-body {
   color: var(--text-main);
+  font-weight: 600;
 }
 
-.ticker-meta {
-  border-radius: 999px;
-  background: var(--bg-color);
-  color: var(--status-info-text);
-  font-size: 12px;
-  font-weight: 600;
-  padding: 1px 8px;
+.message-level-warning {
+  background: var(--status-warn-bg);
+  color: var(--status-warn-text);
+}
+
+.message-level-urgent {
+  background: var(--status-err-bg);
+  color: var(--status-err-text);
+}
+
+.message-level-success {
+  background: var(--status-ok-bg);
+  color: var(--status-ok-text);
 }
 
 .message-bar .copy-status {
@@ -496,6 +513,9 @@ footer {
 @media (prefers-reduced-motion: reduce) {
   .ticker {
     width: auto;
+  }
+
+  .ticker-marquee {
     animation: none;
   }
 
@@ -504,17 +524,6 @@ footer {
   }
 }
 
-.message-level-warning.unread {
-  border-left-color: var(--status-warn-text);
-}
-
-.message-level-urgent.unread {
-  border-left-color: var(--status-err-text);
-}
-
-.message-level-success.unread {
-  border-left-color: var(--status-ok-text);
-}
 
 @media (max-width: 420px) {
   .message-bar {

@@ -290,16 +290,14 @@ test("renderMessages renders multiple unread ticker messages as text", () => {
   const ticker = elements.get("messagesList").children[0];
   const firstTrack = ticker.children[0];
   const firstItem = firstTrack.children[0];
-  const meta = firstItem.children[0];
-  const title = firstItem.children[1];
-  const body = firstItem.children[2];
 
   assert.equal(ticker.className, "ticker");
+  assert.equal(ticker.children.length, 1);
   assert.equal(firstTrack.children.length, 2);
   assert.match(firstItem.className, /ticker-item/);
-  assert.equal(meta.textContent, "通知");
-  assert.equal(title.textContent, "第二条");
-  assert.equal(body.textContent, "继续滚动");
+  assert.match(firstItem.className, /message-level-info/);
+  assert.equal(firstItem.children.length, 0);
+  assert.equal(firstItem.textContent, "继续滚动");
 });
 
 test("getSafeMessageUrl rejects non-http URLs", () => {

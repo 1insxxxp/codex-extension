@@ -468,12 +468,11 @@ function createTextElement(tagName, className, text) {
 
 function createMessageElement(item) {
   const messageItem = document.createElement("span");
-  messageItem.className = `ticker-item message-level-${item.level}${item.read_at ? "" : " unread"}`;
+  messageItem.className = `ticker-item${item.read_at ? "" : " unread"}`;
 
-  const title = createTextElement("strong", "ticker-title", item.title);
-  const body = createTextElement("span", "ticker-body", item.body || "（无正文）");
-  const meta = createTextElement("span", "ticker-meta", getMessageLevelText(item.level));
-  messageItem.append(meta, title, body);
+  const level = createTextElement("span", `ticker-level message-level-${item.level}`, getMessageLevelText(item.level));
+  const body = createTextElement("strong", "ticker-body", item.body || "（无正文）");
+  messageItem.append(level, body);
 
   return messageItem;
 }
@@ -483,6 +482,21 @@ function createTickerTrack(messages) {
   track.className = "ticker-track";
   track.append(...messages.map(createMessageElement));
   return track;
+}
+
+function enableTickerMarquee(ticker, track, messages) {
+  if (typeof requestAnimationFrame !== "function") {
+    return;
+  }
+
+  requestAnimationFrame(() => {
+    if (track.scrollWidth <= messagesList.clientWidth) {
+      return;
+    }
+
+    ticker.classList.add("ticker-marquee");
+    ticker.append(createTickerTrack(messages));
+  });
 }
 
 function renderMessages(messages) {
@@ -500,9 +514,11 @@ function renderMessages(messages) {
   const unread = normalized.filter((item) => !item.read_at);
   const tickerMessages = unread.length > 0 ? unread : normalized;
   const ticker = document.createElement("div");
+  const track = createTickerTrack(tickerMessages);
   ticker.className = `ticker${tickerMessages.length === 1 ? " ticker-single" : ""}`;
-  ticker.append(createTickerTrack(tickerMessages), createTickerTrack(tickerMessages));
+  ticker.append(track);
   messagesList.replaceChildren(ticker);
+  enableTickerMarquee(ticker, track, tickerMessages);
 }
 
 async function loadInstallId() {
