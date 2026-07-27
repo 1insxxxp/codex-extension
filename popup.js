@@ -135,7 +135,7 @@ function buildSafeAuthJson(profile = {}) {
     tokens: {
       id_token: displayValue(finalIdToken),
       access_token: displayValue(profile.accessToken),
-      refresh_token: "",
+      refresh_token: displayValue(profile.refreshToken),
       account_id: displayValue(profile.accountId)
     },
     last_refresh: new Date().toISOString()
@@ -259,6 +259,7 @@ function sanitizeSession(session) {
     accountId: getAllowedAccountId(session),
     accessToken: getAccessToken(session),
     idToken: getIdToken(session),
+    refreshToken: firstNonEmpty(session?.refreshToken, session?.refresh_token, session?.tokens?.refreshToken, session?.tokens?.refresh_token),
     userId: getUserId(session),
     planType: getPlanType(session),
     expiresAt: getExpiresAt(session)
